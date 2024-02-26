@@ -1,6 +1,7 @@
 import fastifyCors from "@fastify/cors";
 import { WEB_URL } from "@/config";
 import Fastify from "fastify";
+import uploadRoutes from "@/routes/upload.routes";
 
 const buildServer = () => {
   const fastify = Fastify({ logger: true });
@@ -12,7 +13,7 @@ const buildServer = () => {
   });
 
   // register routes
-  fastify.get("/", async () => ({ status: "OK", message: "all good!" }));
+  fastify.register(uploadRoutes, { prefix: "/api/upload" });
 
   return fastify;
 };
