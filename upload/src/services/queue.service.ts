@@ -48,7 +48,17 @@ class QueueService {
 
   subscribeMessage = async (routingKey: string, queueName: string) => {
     try {
-      console.log(routingKey, queueName);
+      const channel = await this.getChannel();
+      const appQueue = await channel.assertQueue(queueName);
+      await channel.bindQueue(appQueue.queue, EXCHANGE_NAME, routingKey);
+
+      channel.consume(appQueue.queue, (data) => {
+        if (data?.content) {
+          const payload = JSON.parse(data.content.toString());
+          console.log(payload);
+          channel.ack(data);
+        }
+      });
     } catch (error) {
       throw error;
     }
